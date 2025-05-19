@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <record id="view_presupuesto_vs_contable_list" model="ir.ui.view">
+        <field name="name">presupuesto.vs.contable.list</field>
+        <field name="model">app.presupuesto.presupuesto.linea</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="presupuesto_id"/>
+                <field name="mes"/>
+                <field name="monto"/>
+                <field name="gasto_real"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- <menuitem id="menu_presupuesto_vs_contable" name="Reportes a Comparar" parent="menu_presupuesto_reportes" sequence="5"/>  -->
+        
+</odoo>

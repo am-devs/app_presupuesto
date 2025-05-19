@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+  <template id="reporte_presupuesto_vs_real">
+    <t t-call="web.external_layout">
+      <div class="page">
+        <h2>Reporte Presupuesto Vs Real</h2>
+        <p>Comparativa administrativa y contable.</p>
+      </div>
+    </t>
+  </template>
+</odoo>

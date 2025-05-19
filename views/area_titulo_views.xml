@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <record id="view_area_titulo_form" model="ir.ui.view">
+        <field name="name">area.titulo.form</field>
+        <field name="model">app.presupuesto.area.titulo</field>
+        <field name="arch" type="xml">
+            <form string="Área por Título de Cuenta">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="company_id"/>
+                        <field name="organization"/>
+                        <field name="code"/>
+                        <field name="centro_costo"/>
+                        <field name="active"/>
+                    </group>
+                    <notebook>
+                        <page string="Títulos de Cuenta">
+                            <field name="titulo_cuenta_ids">
+                                <list editable="bottom">
+                                    <field name="name"/>
+                                    <field name="active"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_area_titulo_list" model="ir.ui.view">
+        <field name="name">area.titulo.list</field>
+        <field name="model">app.presupuesto.area.titulo</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="organization"/>
+                <field name="code"/>
+                <field name="centro_costo"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+     
+</odoo>

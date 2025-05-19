@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <record id="view_presupuesto_form" model="ir.ui.view">
+        <field name="name">presupuesto.form</field>
+        <field name="model">app.presupuesto.presupuesto</field>
+        <field name="arch" type="xml">
+            <form string="Presupuesto">
+                <header>
+                    <button name="action_procesar_presupuesto" string="Procesar Presupuesto" type="object"/>
+                    <button name="action_exportar_excel" string="Exportar Excel" type="object"/>
+                    <field name="state" widget="statusbar" statusbar_visible="borrador,procesado"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="company_id"/>
+                        <field name="organization"/>
+                        <field name="area_id"/>
+                        <field name="year"/>
+                        <field name="moneda"/>
+                        <field name="monto_total"/>
+                        <field name="metodo"/>
+                        <field name="active"/>
+                    </group>
+                    <notebook>
+                        <page string="Líneas por Mes">
+                            <field name="presupuesto_linea_ids">
+                                <list editable="bottom">
+                                    <field name="mes"/>
+                                    <field name="monto"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

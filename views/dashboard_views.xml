@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <!-- Vista gráfica tipo barra -->
+    <record id="view_presupuesto_linea_graph" model="ir.ui.view">
+        <field name="name">presupuesto.linea.graph</field>
+        <field name="model">app.presupuesto.presupuesto.linea</field>
+        <field name="arch" type="xml">
+            <graph string="Ejecución Presupuestaria por Mes" type="bar">
+                <field name="mes" type="row"/>
+                <field name="titulo_cuenta_id" type="col"/>
+                <field name="monto"/>
+                <field name="gasto_real"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Vista búsqueda para filtros -->
+    <record id="view_presupuesto_linea_search" model="ir.ui.view">
+        <field name="name">presupuesto.linea.search</field>
+        <field name="model">app.presupuesto.presupuesto.linea</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="titulo_cuenta_id"/>
+                <field name="presupuesto_id"/>
+                <filter name="saldo_disponible" string="Con disponible" domain="[('monto','>',0)]"/>
+            </search>
+        </field>
+    </record>
+
+</odoo>

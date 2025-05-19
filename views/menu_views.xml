@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menú raíz -->
+    <menuitem id="menu_app_presupuesto_root" name="Presupuestos" sequence="10"/>
+
+    <!-- Submenús principales -->
+    <menuitem id="menu_app_presupuesto_config" name="Configuración" parent="menu_app_presupuesto_root" sequence="1"/>
+    <menuitem id="menu_presupuesto_reportes" name="Reportes" parent="menu_app_presupuesto_root" sequence="3"/>
+
+    <!-- ========== CONFIGURACIÓN ========== -->
+
+    <menuitem id="menu_area_titulo" name="Opciones" parent="menu_app_presupuesto_config" sequence="1"/>
+
+    <!-- Acción: Áreas -->
+   <record id="action_area_titulo" model="ir.actions.act_window">
+        <field name="name">Áreas por Título</field>
+        <field name="res_model">app.presupuesto.area.titulo</field>
+        <field name="view_mode">list,form</field>
+    </record>
+     <menuitem id="menu_area_titulo_action" parent="menu_area_titulo" action="action_area_titulo" sequence="10"/>
+
+    <!-- Acción: Títulos de Cuenta -->
+    <record id="action_partidas" model="ir.actions.act_window">
+        <field name="name">Títulos de Cuenta</field>
+        <field name="res_model">app.presupuesto.titulo.cuenta</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <menuitem id="menu_partidas" name="Títulos de Cuenta" parent="menu_area_titulo"
+              action="app_presupuesto.action_partidas" sequence="10"/>
+
+    <!-- ========== MÓDULO PRINCIPAL ========== -->
+
+    <!-- Acción: Presupuestos -->
+    <record id="action_presupuesto" model="ir.actions.act_window">
+        <field name="name">Presupuestos</field>
+        <field name="res_model">app.presupuesto.presupuesto</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <menuitem id="menu_presupuesto" name="Presupuestos" parent="menu_app_presupuesto_root"
+              action="app_presupuesto.action_presupuesto" sequence="2"/>
+
+    <!-- ========== REPORTES ========== -->
+
+    <!-- Submenú agrupador -->
+    <menuitem id="menu_presupuesto_vs_contable"
+              name="Reportes a Comparar"
+              parent="menu_presupuesto_reportes"
+              sequence="5"/>
+
+    <!-- Acción: Presupuesto vs Contabilidad -->
+    <record id="action_presupuesto_vs_contable" model="ir.actions.act_window">
+        <field name="name">Presupuesto Vs Contabilidad</field>
+        <field name="res_model">app.presupuesto.presupuesto.linea</field>
+        <field name="view_mode">list</field>
+    </record>
+    <menuitem id="menu_presupuesto_vs_contable_action"
+              name="Presupuesto Vs Contabilidad"
+              parent="menu_presupuesto_vs_contable"
+              action="app_presupuesto.action_presupuesto_vs_contable"
+              sequence="10"/>
+
+    <!-- Acción: Presupuesto vs Real -->
+    <record id="action_presupuesto_vs_real" model="ir.actions.act_window">
+        <field name="name">Presupuesto Vs Real</field>
+        <field name="res_model">app.presupuesto.presupuesto</field>
+        <field name="view_mode">kanban</field>
+    </record>
+    <menuitem id="menu_presupuesto_vs_real_action"
+              name="Presupuesto Vs Real"
+              parent="menu_presupuesto_vs_contable"
+              action="app_presupuesto.action_presupuesto_vs_real"
+              sequence="20"/>
+
+    <!-- Acción: Pagos Programados -->
+<record id="action_pagos_programados_wizard" model="ir.actions.act_window">
+    <field name="name">Pagos Programados</field>
+    <field name="res_model">app.presupuesto.pagos.programados.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+</record>
+
+<menuitem id="menu_pagos_programados"
+          name="Pagos Programados"
+          parent="menu_presupuesto_vs_contable"
+          action="app_presupuesto.action_pagos_programados_wizard"
+          sequence="30"/>
+
+    <!-- Acción: Tablero -->
+    <record id="action_presupuesto_dashboard" model="ir.actions.act_window">
+        <field name="name">Tablero de Presupuestos</field>
+        <field name="res_model">app.presupuesto.presupuesto.linea</field>
+        <field name="view_mode">graph</field>
+        <field name="search_view_id" ref="view_presupuesto_linea_search"/>
+    </record>
+    <menuitem id="menu_presupuesto_dashboard"
+              name="Tablero"
+              parent="menu_presupuesto_vs_contable"
+              action="app_presupuesto.action_presupuesto_dashboard"
+              sequence="40"/>
+</odoo>
+<!-- 
+// Colors
+// This is BS default
+$o-white: #d8eefd !default;
+$o-black: #000000 !default;
+
+$o-gray-100 #d8eefd !default;
+$o-gray-200: #e9ecef !default;
+$o-gray-300: #dee2e6 !default;
+$o-gray-400: #ced4da !default;
+$o-gray-500: #adb5bd !default;
+$o-gray-600: #6c757d !default;
+$o-gray-700: #495057 !default;
+$o-gray-800: #343a40 !default;
+$o-gray-900: #212529 !default;
+
+$o-grays: (
+    100: $o-gray-100,
+    200: $o-gray-200,
+    300: $o-gray-300,
+    400: $o-gray-400,
+    500: $o-gray-500,
+    600: $o-gray-600,
+    700: $o-gray-700,
+    800: $o-gray-800,
+    900: $o-gray-900,
+) !default;
+
+$o-community-color: #4880c9 !default;
+$o-enterprise-color: #4880c9 !default;
+$o-enterprise-action-color: #017e84 !default;
+
+$o-brand-odoo: $o-community-color !default;
+$o-brand-primary: $o-community-color !default; -->

@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <record id="ir_cron_notificar_pagos" model="ir.cron">
+        <field name="name">Notificar Pagos Próximos</field>
+        <field name="model_id" ref="model_app_presupuesto_pagos_notificacion"/>
+        <field name="state">code</field>
+        <field name="code">model.action_notificar_pagos_proximos()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        
+        <field name="active">True</field>
+    </record>
+</odoo>
