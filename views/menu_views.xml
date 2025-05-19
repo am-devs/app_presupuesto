@@ -25,8 +25,19 @@
         <field name="res_model">app.presupuesto.titulo.cuenta</field>
         <field name="view_mode">list,form</field>
     </record>
-    <menuitem id="menu_partidas" name="Títulos de Cuenta" parent="menu_area_titulo"
-              action="app_presupuesto.action_partidas" sequence="10"/>
+    <menuitem id="menu_partidas" name="Títulos de Cuenta" parent="menu_area_titulo" action="app_presupuesto.action_partidas" sequence="10"/>
+
+
+      <!-- Acción Método -->
+  <record id="action_metodo" model="ir.actions.act_window">
+    <field name="name">Métodos de Cálculo</field>
+    <field name="res_model">app.presupuesto.metodo</field>
+    <field name="view_mode">kanban,list,form</field>
+  </record>
+
+  <!-- Menú -->
+  <menuitem id="menu_metodo" name="Métodos de Cálculo" parent="menu_area_titulo" action="action_metodo" sequence="10"/>
+
 
     <!-- ========== MÓDULO PRINCIPAL ========== -->
 
@@ -98,37 +109,3 @@
               action="app_presupuesto.action_presupuesto_dashboard"
               sequence="40"/>
 </odoo>
-<!-- 
-// Colors
-// This is BS default
-$o-white: #d8eefd !default;
-$o-black: #000000 !default;
-
-$o-gray-100 #d8eefd !default;
-$o-gray-200: #e9ecef !default;
-$o-gray-300: #dee2e6 !default;
-$o-gray-400: #ced4da !default;
-$o-gray-500: #adb5bd !default;
-$o-gray-600: #6c757d !default;
-$o-gray-700: #495057 !default;
-$o-gray-800: #343a40 !default;
-$o-gray-900: #212529 !default;
-
-$o-grays: (
-    100: $o-gray-100,
-    200: $o-gray-200,
-    300: $o-gray-300,
-    400: $o-gray-400,
-    500: $o-gray-500,
-    600: $o-gray-600,
-    700: $o-gray-700,
-    800: $o-gray-800,
-    900: $o-gray-900,
-) !default;
-
-$o-community-color: #4880c9 !default;
-$o-enterprise-color: #4880c9 !default;
-$o-enterprise-action-color: #017e84 !default;
-
-$o-brand-odoo: $o-community-color !default;
-$o-brand-primary: $o-community-color !default; -->

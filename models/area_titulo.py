@@ -11,6 +11,7 @@ class AreaTituloCuenta(models.Model):
     active = fields.Boolean('Activo', default=True)
     centro_costo = fields.Char('Centro de Costo')
     titulo_cuenta_ids = fields.One2many('app.presupuesto.titulo.cuenta', 'area_id', string='Títulos de Cuenta')
+    presupuesto_anual = fields.Float('Presupuesto Anual del Área', required=True)
 
 class TituloCuenta(models.Model):
     _name = 'app.presupuesto.titulo.cuenta'

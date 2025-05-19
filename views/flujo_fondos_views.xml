@@ -13,13 +13,13 @@
         </field>
     </record>
 
-            <menuitem id="menu_flujo_fondos" name="Flujo de Fondos" parent="menu_presupuesto_reportes" sequence="4"/>
-    
-    <record id="action_flujo_fondos" model="ir.actions.act_window">
-        <field name="name">Presupuesto</field>
-        <field name="res_model">app.presupuesto.presupuesto.linea</field>
-        <field name="view_mode">list</field>
-    </record>
+                <!-- <menuitem id="menu_flujo_fondos" name="Flujo de Fondos" parent="menu_presupuesto_reportes" sequence="4"/>
+        
+        <record id="action_flujo_fondos" model="ir.actions.act_window">
+            <field name="name">Presupuesto</field>
+            <field name="res_model">app.presupuesto.presupuesto.linea</field>
+            <field name="view_mode">list</field>
+        </record>
 
-    <menuitem id="menu_flujo_fondos_action" parent="menu_flujo_fondos" action="action_flujo_fondos"/>
+        <menuitem id="menu_flujo_fondos_action" parent="menu_flujo_fondos" action="action_flujo_fondos"/> -->
 </odoo>

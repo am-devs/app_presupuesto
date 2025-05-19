@@ -17,6 +17,7 @@
         'views/reportes_vs_contabilidad.xml',
         'views/dashboard_views.xml',
         'views/pagos_programados_wizard_views.xml',
+        'views/metodo_calculo_views.xml',
         'report/presupuesto_report.xml',
         'data/ir_cron_data.xml',
         'views/menu_views.xml',

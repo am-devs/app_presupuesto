@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+  <!-- Vista Kanban Método -->
+  <record id="view_metodo_kanban" model="ir.ui.view">
+    <field name="name">presupuesto.metodo.kanban</field>
+    <field name="model">app.presupuesto.metodo</field>
+    <field name="arch" type="xml">
+      <kanban>
+        <field name="name"/>
+        <field name="tipo"/>
+        <templates>
+          <t t-name="kanban-box">
+            <div class="oe_kanban_card">
+              <strong><field name="name"/></strong>
+              <div>Tipo: <field name="tipo"/></div>
+              <div>Activo: <field name="activo"/></div>
+            </div>
+          </t>
+        </templates>
+      </kanban>
+    </field>
+  </record>
+
+  <!-- Vista List Método -->
+  <record id="view_metodo_list" model="ir.ui.view">
+    <field name="name">presupuesto.metodo.list</field>
+    <field name="model">app.presupuesto.metodo</field>
+    <field name="arch" type="xml">
+      <list>
+        <field name="name"/>
+        <field name="tipo"/>
+        <field name="activo"/>
+      </list>
+    </field>
+  </record>
+
+  <!-- Vista Form Método -->
+  <record id="view_metodo_form" model="ir.ui.view">
+    <field name="name">presupuesto.metodo.form</field>
+    <field name="model">app.presupuesto.metodo</field>
+    <field name="arch" type="xml">
+      <form string="Método de Cálculo">
+        <sheet>
+          <group>
+            <field name="name"/>
+            <field name="tipo"/>
+            <field name="activo"/>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+</odoo>

@@ -1,21 +1,23 @@
-import base64
-import io
-import xlsxwriter # type: ignore
-from odoo import models, fields, api # type: ignore
+from odoo import models, fields, api
+from odoo.exceptions import ValidationError
 from datetime import datetime
 
 class Presupuesto(models.Model):
     _name = 'app.presupuesto.presupuesto'
-    _description = 'Presupuesto por Área'
+    _description = 'Presupuesto por Título de Cuenta'
 
-    name = fields.Char('Nombre', required=True)
+    name = fields.Char('Descripción', required=True)
     company_id = fields.Many2one('res.company', string='Compañía', default=lambda self: self.env.company)
     organization = fields.Char('Organización')
-    area_id = fields.Many2one('app.presupuesto.area.titulo', string='Área')
     year = fields.Char('Año', required=True)
-    moneda = fields.Many2one('res.currency', string='Moneda')
-    monto_total = fields.Float('Monto Total')
+    moneda = fields.Selection([('USD', 'USD'), ('VES', 'VES')], default='USD')
+    metodo_id = fields.Many2one('app.presupuesto.metodo', string='Método de Cálculo')
+    estado = fields.Selection([('borrador', 'Borrador'), ('procesado', 'Procesado')], default='borrador')
+    fecha_inicio = fields.Date('Fecha de Inicio', required=True, default=fields.Date.today)
+    monto_total = fields.Float('Monto Total', compute='_compute_monto_total', store=True)
+    lineas_ids = fields.One2many('app.presupuesto.presupuesto.linea', 'presupuesto_id', string='Detalle por Mes')
     active = fields.Boolean('Activo', default=True)
+    titulo_cuenta_id = fields.Many2one('app.presupuesto.titulo.cuenta', string='Título de Cuenta', required=True)
     metodo = fields.Selection([
         ('mensual', 'Mensual'),
         ('bimensual', 'Bimensual'),
@@ -23,91 +25,50 @@ class Presupuesto(models.Model):
         ('semestral', 'Semestral'),
         ('variable', 'Variable'),
     ], string='Método')
-    presupuesto_linea_ids = fields.One2many('app.presupuesto.presupuesto.linea', 'presupuesto_id', string='Líneas')
     state = fields.Selection([
         ('borrador', 'Borrador'),
         ('procesado', 'Procesado'),
     ], string='Estado', default='borrador')
 
-    def action_exportar_excel(self):
-            output = io.BytesIO()
-            workbook = xlsxwriter.Workbook(output, {'in_memory': True})
-            sheet = workbook.add_worksheet('Presupuesto')
-
-            # Encabezados
-            sheet.write(0, 0, 'Mes')
-            sheet.write(0, 1, 'Monto Presupuestado')
-            sheet.write(0, 2, 'Gasto Real')
-            sheet.write(0, 3, 'Disponible')
-
-            row = 1
-            for linea in self.presupuesto_linea_ids:
-                disponible = linea.monto - linea.gasto_real
-                sheet.write(row, 0, linea.mes.title())
-                sheet.write(row, 1, linea.monto)
-                sheet.write(row, 2, linea.gasto_real)
-                sheet.write(row, 3, disponible)
-                row += 1
-
-            workbook.close()
-            output.seek(0)
-            datos = output.read()
-            output.close()
-
-            attachment = self.env['ir.attachment'].create({
-                'name': f'Reporte_Presupuesto_{self.name}.xlsx',
-                'type': 'binary',
-                'datas': base64.b64encode(datos),
-                'res_model': 'app.presupuesto.presupuesto',
-                'res_id': self.id,
-                'mimetype': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            })
-
-            return {
-                'type': 'ir.actions.act_url',
-                'url': f'/web/content/{attachment.id}?download=true',
-                'target': 'new',
-            }
-
+    @api.depends('lineas_ids.monto')
+    def _compute_monto_total(self):
+        for rec in self:
+            rec.monto_total = sum(line.monto for line in rec.lineas_ids)
 
     def action_procesar_presupuesto(self):
         for presupuesto in self:
             if presupuesto.state == 'procesado':
                 continue
-            meses = [
-                'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
-                'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
-            ]
-            monto_x_mes = presupuesto.monto_total / 12 if presupuesto.metodo == 'mensual' else 0
-            lineas = []
-            for mes in meses:
-                monto = monto_x_mes
-                if presupuesto.metodo == 'bimensual':
-                    monto = presupuesto.monto_total / 6
-                elif presupuesto.metodo == 'trimestral':
-                    monto = presupuesto.monto_total / 4
-                elif presupuesto.metodo == 'semestral':
-                    monto = presupuesto.monto_total / 2
-                elif presupuesto.metodo == 'variable':
-                    monto = 0
-                lineas.append((0, 0, {
-                    'mes': mes,
-                    'monto': monto,
-                }))
-            presupuesto.presupuesto_linea_ids = lineas
+
+            # Validar que no se exceda presupuesto del área
+            montos_por_area = {}
+            for linea in presupuesto.lineas_ids:
+                area = linea.titulo_cuenta_id.area_id
+                if area:
+                    montos_por_area.setdefault(area.id, 0.0)
+                    montos_por_area[area.id] += linea.monto
+
+            for area_id, total in montos_por_area.items():
+                area = self.env['app.presupuesto.area.titulo'].browse(area_id)
+                if total > area.presupuesto_anual:
+                    raise ValidationError(
+                        f"Área '{area.name}' tiene asignado {total:.2f}, excede su presupuesto anual de {area.presupuesto_anual:.2f}"
+                    )
+
             presupuesto.state = 'procesado'
 
     def obtener_disponible(self):
         self.ensure_one()
-        total_gastado = sum(self.presupuesto_linea_ids.mapped('gasto_real'))
+        total_gastado = sum(self.lineas_ids.mapped('gasto_real'))
         return self.monto_total - total_gastado
+
 
 class PresupuestoLinea(models.Model):
     _name = 'app.presupuesto.presupuesto.linea'
     _description = 'Detalle de Presupuesto por Mes'
 
     presupuesto_id = fields.Many2one('app.presupuesto.presupuesto', string='Presupuesto')
-    titulo_cuenta_id = fields.Many2one('app.presupuesto.titulo.cuenta', string='Título de Cuenta')
+    titulo_cuenta_id = fields.Many2one('app.presupuesto.titulo.cuenta', string='Título de Cuenta', required=True)
 
     mes = fields.Selection([
         ('enero', 'Enero'),
@@ -136,14 +97,13 @@ class PresupuestoLinea(models.Model):
                     'julio': 7, 'agosto': 8, 'septiembre': 9, 'octubre': 10, 'noviembre': 11, 'diciembre': 12
                 }[linea.mes]
                 fecha_inicio = datetime(int(year), mes_numero, 1)
-                fecha_fin = datetime(int(year), mes_numero, 28)  
+                fecha_fin = datetime(int(year), mes_numero, 28)
                 domain = [
                     ('date', '>=', fecha_inicio),
                     ('date', '<=', fecha_fin),
-                    ('account_id.name', '=', linea.presupuesto_id.area_id.name),
+                    ('account_id.name', '=', linea.titulo_cuenta_id.name),
                 ]
                 gastos = self.env['account.move.line'].search(domain)
-                linea.gasto_real = sum(gastos.mapped('debit'))  
-            else :
+                linea.gasto_real = sum(gastos.mapped('debit'))
+            else:
                 linea.gasto_real = 0
-
